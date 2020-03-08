@@ -2,7 +2,7 @@
 const clear = document.querySelector(".clear");
 const dateElement = document.getElementById("date");
 const list = document.getElementById("list");
-const imput = document.getElementById("input");
+const input = document.getElementById("input");
 
 //Classes names
 const CHECK = "fa-check-circle";
@@ -10,8 +10,38 @@ const UNCHECK = "fa-circle-thin";
 const LINE_THROUGH = "lineThrough";
 
 //variables
-let LIST = [],
-    id = 0;
+let LIST,
+    id;
+
+    // get item from local storage
+let data = localStorage.getItem("TODO");
+
+
+// check if data is not empty
+if(data){
+    LIST = JSON.parse(data);
+    id = LIST.length; //set id to last one in the list
+    loadList(LIST); //load the list to the user interface
+} else {
+LIST = [];
+id = 0;
+};
+
+
+//load items to user interface
+
+function loadList(array){
+    array.forEach(function(item){
+addToDo(item.name, item.id, item.done, item.trash);
+    });
+};
+
+//clear the local storage
+
+clear.addEventListener("click", function(){
+localStorage.clear();
+location.reload();
+});
 
 //Show today's date
 const options = { weekday: "long", month: "short", day: "numeric" };
@@ -22,13 +52,12 @@ dateElement.innerHTML = today.toLocaleDateString("en-US", options);
 
 // Add to do function
 function addToDo(toDo, id, done, trash) {
-    if (trash) { return; }
+    if(trash) { return; }
 
     const DONE = done ? CHECK : UNCHECK;
     const LINE = done ? LINE_THROUGH : "";
 
-    const item = `
-                <li class="item">
+    const item = `<li class="item">
                     <i class="fa ${DONE} co" job="complete" id="${id}"></i>
                     <p class="text ${LINE}">${toDo}</p>
                     <i class="fa fa-trash-o de" job="delete" id="${id}"></i>
@@ -43,20 +72,23 @@ function addToDo(toDo, id, done, trash) {
 
 
 //Add item to the list using Enter key
-document.addEventListener("keyup", function (event) {
-    if (event.keyCode == 13) {
+document.addEventListener("keyup", function(event) {
+    if(event.keyCode == 13) {
         const toDo = input.value;
 
         //if the input isn't empty
-        if (toDo) {
+        if(toDo) {
             addToDo(toDo, id, false, false);
             LIST.push({
-                name: toDo ?
+                name: toDo,
                     id : id,
-                done: false,
-                trash: false
+                done : false,
+                trash : false
             });
-            id++
+
+                // add item to local storage (THIS CODE MUST BE ADDED WHERE LIST IS)
+localStorage.setItem("TODO", JSON.stringify(LIST));
+            id++;
         }
         input.value = "";
     }
@@ -84,13 +116,15 @@ function removeToDo(element) {
 
 //target the element dynamically
 
-list.addEventListener("click", function (event) {
+list.addEventListener("click", function(event) {
     const element = event.target;
     const elementJob = element.attributes.job.value;
 
-    if (elementJob == "complete") {
+    if(elementJob == "complete") {
         completeToDo(element);
-    } else if (elementJob == "delete") {
+    } else if(elementJob == "delete") {
         removeToDo(element);
     }
+        // add item to local storage (THIS CODE MUST BE ADDED WHERE LIST IS)
+localStorage.setItem("TODO", JSON.stringify(LIST));
 });
