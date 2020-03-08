@@ -11,7 +11,7 @@ const LINE_THROUGH = "lineThrough";
 
 //variables
 let LIST = [],
- id = 0;
+    id = 0;
 
 //Show today's date
 const options = { weekday: "long", month: "short", day: "numeric" };
@@ -22,7 +22,7 @@ dateElement.innerHTML = today.toLocaleDateString("en-US", options);
 
 // Add to do function
 function addToDo(toDo, id, done, trash) {
-    if(trash){return;}
+    if (trash) { return; }
 
     const DONE = done ? CHECK : UNCHECK;
     const LINE = done ? LINE_THROUGH : "";
@@ -43,18 +43,18 @@ function addToDo(toDo, id, done, trash) {
 
 
 //Add item to the list using Enter key
-document.addEventListener("keyup", function(event){
-    if(event.keyCode == 13){
+document.addEventListener("keyup", function (event) {
+    if (event.keyCode == 13) {
         const toDo = input.value;
 
         //if the input isn't empty
-        if(toDo){
+        if (toDo) {
             addToDo(toDo, id, false, false);
             LIST.push({
-                name : toDo?
-                id : id,
-                done : false,
-                trash : false
+                name: toDo ?
+                    id : id,
+                done: false,
+                trash: false
             });
             id++
         }
@@ -65,10 +65,32 @@ document.addEventListener("keyup", function(event){
 
 //complete to do
 
-function completeToDo(element){
+function completeToDo(element) {
     element.classList.toggle(CHECK);
     element.classList.toggle(UNCHECK);
     element.parentNode.querySelector(".text").classList.toggle(LINE_THROUGH);
 
     LIST[element.id].done = LIST[element.id].done ? false : true;
 }
+
+//remove to do function
+
+function removeToDo(element) {
+    element.parentNode.parentNode.removeChild(element.parentNode);
+
+    LIST[element.id].trash = true;
+}
+
+
+//target the element dynamically
+
+list.addEventListener("click", function (event) {
+    const element = event.target;
+    const elementJob = element.attributes.job.value;
+
+    if (elementJob == "complete") {
+        completeToDo(element);
+    } else if (elementJob == "delete") {
+        removeToDo(element);
+    }
+});
