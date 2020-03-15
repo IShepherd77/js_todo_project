@@ -17,6 +17,7 @@ body{
 .header{
     width: 380px;
     height:200px;
+    /* background-image: url('../img/iv.jpg'); */
     background-image: url('../img/bg2.jpg');
     background-size: 100% 200%;
     background-repeat: no-repeat;
